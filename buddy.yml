@@ -1,0 +1,71 @@
+- pipeline: "CA5-Part2-Alternative"
+  on: "EVENT"
+  events:
+  - type: "PUSH"
+    refs:
+    - "refs/heads/main"
+  priority: "NORMAL"
+  fail_on_prepare_env_warning: true
+  actions:
+  - action: "Execute: ./gradlew tasks clean assemble"
+    type: "BUILD"
+    working_directory: "/buddy/gradle-basic-demo"
+    docker_image_name: "library/gradle"
+    docker_image_tag: "5.4-jdk8"
+    execute_commands:
+    - "cd gradle_basic_demo"
+    - "chmod +x gradlew"
+    - "./gradlew tasks clean assemble"
+    volume_mappings:
+    - "/:/buddy/gradle-basic-demo"
+    cache_base_image: true
+    shell: "BASH"
+  - action: "Execute: ./gradlew test"
+    type: "BUILD"
+    working_directory: "/buddy/gradle-basic-demo"
+    docker_image_name: "library/gradle"
+    docker_image_tag: "5.4-jdk8"
+    execute_commands:
+    - "cd gradle_basic_demo"
+    - "chmod +x gradlew"
+    - "./gradlew test"
+    volume_mappings:
+    - "/:/buddy/gradle-basic-demo"
+    cache_base_image: true
+    shell: "BASH"
+  - action: "Execute: ./gradlew jar"
+    type: "BUILD"
+    working_directory: "/buddy/gradle-basic-demo"
+    docker_image_name: "library/gradle"
+    docker_image_tag: "5.4-jdk8"
+    execute_commands:
+    - "cd gradle_basic_demo"
+    - "chmod +x gradlew"
+    - "./gradlew jar"
+    volume_mappings:
+    - "/:/buddy/gradle-basic-demo"
+    cache_base_image: true
+    shell: "BASH"
+  - action: "Execute: ./gradlew javadoc"
+    type: "BUILD"
+    working_directory: "/buddy/gradle-basic-demo"
+    docker_image_name: "library/gradle"
+    docker_image_tag: "5.4-jdk8"
+    execute_commands:
+    - "cd gradle_basic_demo"
+    - "chmod +x gradlew"
+    - "./gradlew javadoc"
+    volume_mappings:
+    - "/:/buddy/gradle-basic-demo"
+    cache_base_image: true
+    shell: "BASH"
+  - action: "Build Docker image"
+    type: "DOCKERFILE"
+    dockerfile_path: "gradle_basic_demo/Dockerfile"
+    context_path: "gradle_basic_demo"
+    target_platform: "linux/amd64"
+  - action: "Push Docker image"
+    type: "DOCKER_PUSH"
+    docker_image_tag: "docker"
+    repository: "hugoamp/ca5-part2-alternative"
+    integration_hash: "Pr1gO3GWpmbkBlxEazJn4KRjLM"
